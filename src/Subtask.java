@@ -1,15 +1,23 @@
 public class Subtask extends Task {
-    private EpicTask epicTaskOwner;
+    private final EpicTask epicTaskOwner;
 
-    public Subtask(String name, String description, TaskStatus status, int id) {
+    public Subtask(String name, String description, TaskStatus status, int id, EpicTask epicTaskOwner) {
         super(name, description, status, id);
+        this.epicTaskOwner = epicTaskOwner;
+        epicTaskOwner.addTask(this);
     }
 
     public EpicTask getEpicTaskOwner() {
         return epicTaskOwner;
     }
 
-    public void setEpicTaskOwner(EpicTask epicTaskOwner) {
-        this.epicTaskOwner = epicTaskOwner;
+    @Override
+    public String toString() {
+        return " Subtask{" +
+                "name='" + name + '\'' +
+                ", id=" + id +
+                ", status=" + status +
+                ", epicTaskOwnerId=" + epicTaskOwner.getId() +
+                "} ";
     }
 }

@@ -1,10 +1,10 @@
 import java.util.Objects;
 
 public class Task {
-    private String name;
-    private String description;
-    private final int id;
-    private final TaskStatus status;
+    protected String name;
+    protected String description;
+    protected final int id;
+    protected TaskStatus status;
 
     public Task(String name, String description, TaskStatus status, int id) {
         this.name = name;
@@ -49,5 +49,15 @@ public class Task {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "name='" + name + '\'' +
+                ", id=" + id +
+                ", status=" + status +
+                '}';
     }
 }
