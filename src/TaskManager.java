@@ -60,7 +60,7 @@ public class TaskManager {
     }
 
     public EpicTask createEpicTask(String name, String description) {
-        return new EpicTask(name, description, TaskStatus.NEW, generateTaskId());
+        return new EpicTask(name, description, generateTaskId());
     }
 
     public Subtask createSubTask(String name, String description, EpicTask epicTask) {

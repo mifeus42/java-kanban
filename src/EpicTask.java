@@ -3,7 +3,7 @@ import java.util.HashMap;
 public class EpicTask extends Task {
     private final HashMap<Integer, Subtask> subtasks;
 
-    public EpicTask(String name, String description, TaskStatus status, int id) {
+    public EpicTask(String name, String description, int id) {
         super(name, description, TaskStatus.NEW, id);
         subtasks = new HashMap<>();
     }
