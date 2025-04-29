@@ -1,14 +1,18 @@
 public class Subtask extends Task {
-    private final EpicTask epicTaskOwner;
+    private final int epicTaskOwnerId;
 
-    public Subtask(String name, String description, TaskStatus status, int id, EpicTask epicTaskOwner) {
-        super(name, description, status, id);
-        this.epicTaskOwner = epicTaskOwner;
-        epicTaskOwner.addTask(this);
+    public Subtask(String name, String description, int id, int epicTaskOwnerId) {
+        super(name, description, id);
+        this.epicTaskOwnerId = epicTaskOwnerId;
     }
 
-    public EpicTask getEpicTaskOwner() {
-        return epicTaskOwner;
+    public Subtask(String name, String description, TaskStatus status, int id, int epicTaskOwnerId) {
+        super(name, description, status, id);
+        this.epicTaskOwnerId = epicTaskOwnerId;
+    }
+
+    public int getEpicTaskOwnerId() {
+        return epicTaskOwnerId;
     }
 
     @Override
@@ -17,7 +21,7 @@ public class Subtask extends Task {
                 "name='" + name + '\'' +
                 ", id=" + id +
                 ", status=" + status +
-                ", epicTaskOwnerId=" + epicTaskOwner.getId() +
+                ", epicTaskOwnerId=" + epicTaskOwnerId +
                 "} ";
     }
 }

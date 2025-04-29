@@ -1,10 +1,17 @@
 import java.util.Objects;
 
 public class Task {
-    protected String name;
-    protected String description;
+    protected final String name;
+    protected final String description;
     protected final int id;
-    protected TaskStatus status;
+    protected final TaskStatus status;
+
+    public Task(String name, String description, int id) {
+        this.name = name;
+        this.description = description;
+        this.id = id;
+        status = TaskStatus.NEW;
+    }
 
     public Task(String name, String description, TaskStatus status, int id) {
         this.name = name;
@@ -17,20 +24,17 @@ public class Task {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
+    /*
+    Сеттера для статуса нет по условиям задачи (Обновление статуса происходит с обновлением задачи).
+    Это сделано для того, чтобы объекты хранящиеся в мапах менеджера нельзя было поменять в других классах.
+    Наставник нам в принципе тоже про это говорил на вебинаре.
+     */
     public TaskStatus getStatus() {
         return status;
     }
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public int getId() {
@@ -50,7 +54,6 @@ public class Task {
     public int hashCode() {
         return Objects.hashCode(id);
     }
-
 
     @Override
     public String toString() {

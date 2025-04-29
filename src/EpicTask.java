@@ -1,56 +1,26 @@
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EpicTask extends Task {
-    private final HashMap<Integer, Subtask> subtasks;
+    private final ArrayList<Integer> subtaskIds;
 
     public EpicTask(String name, String description, int id) {
-        super(name, description, TaskStatus.NEW, id);
-        subtasks = new HashMap<>();
+        super(name, description, id);
+        subtaskIds = new ArrayList<>();
     }
 
-    public void addTask(Subtask subtask) {
-        subtasks.put(subtask.getId(), subtask);
-        calcEpicTaskStatus();
+    public EpicTask(String name, String description, TaskStatus status, int id, ArrayList<Integer> subtaskIds) {
+        super(name, description, status, id);
+        this.subtaskIds = subtaskIds;
     }
 
-    public void removeTask(int id) {
-        subtasks.remove(id);
-        calcEpicTaskStatus();
-    }
-
-    public HashMap<Integer, Subtask> getSubtasks() {
-        return subtasks;
-    }
-
-    public void deleteSubtasks() {
-        subtasks.clear();
-    }
-
-    public void calcEpicTaskStatus() {
-        if (subtasks.isEmpty()) {
-            return;
-        }
-
-        boolean isAllTaskNew = true;
-        boolean isAllTasksDone = true;
-
-        for (Subtask subtask : subtasks.values()) {
-            if (subtask.getStatus() != TaskStatus.DONE) {
-                isAllTasksDone = false;
-            }
-            if (subtask.getStatus() != TaskStatus.NEW) {
-                isAllTaskNew = false;
-            }
-        }
-
-        if (isAllTaskNew) {
-            status = TaskStatus.NEW;
-        } else if (isAllTasksDone) {
-            status = TaskStatus.DONE;
-        } else {
-            status = TaskStatus.IN_PROGRESS;
-        }
-
+    /*
+    Если я возвращаю копию subtaskIds, то сам лист изменить нельзя. Но новый лист будет хранить ссылки на объекты,
+    которые хранились в старом листе. В данном случае объекты Integer и их по ссылке изменить не получится,
+    но если у меня объекты изменяемые, то что делать?
+    */
+    public ArrayList<Integer> getSubtaskIds() {
+        return new ArrayList<>(subtaskIds);
     }
 
     @Override
@@ -59,7 +29,7 @@ public class EpicTask extends Task {
                 "name='" + name + '\'' +
                 ", id=" + id +
                 ", status=" + status +
-                ", subtasks=" + subtasks +
+                ", subtasks=" + subtaskIds +
                 "} ";
     }
 }
