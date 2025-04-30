@@ -9,10 +9,7 @@ public class Task {
     protected final TaskStatus status;
 
     public Task(String name, String description, int id) {
-        this.name = name;
-        this.description = description;
-        this.id = id;
-        status = TaskStatus.NEW;
+        this(name, description, TaskStatus.NEW, id);
     }
 
     public Task(String name, String description, TaskStatus status, int id) {
@@ -26,11 +23,6 @@ public class Task {
         return description;
     }
 
-    /*
-    Сеттера для статуса нет по условиям задачи (Обновление статуса происходит с обновлением задачи).
-    Это сделано для того, чтобы объекты хранящиеся в мапах менеджера нельзя было поменять в других классах.
-    Наставник нам в принципе тоже про это говорил на вебинаре.
-     */
     public TaskStatus getStatus() {
         return status;
     }

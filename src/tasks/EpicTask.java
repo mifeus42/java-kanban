@@ -15,11 +15,6 @@ public class EpicTask extends Task {
         this.subtaskIds = subtaskIds;
     }
 
-    /*
-    Если я возвращаю копию subtaskIds, то сам лист изменить нельзя. Но новый лист будет хранить ссылки на объекты,
-    которые хранились в старом листе. В данном случае объекты Integer и их по ссылке изменить не получится,
-    но если у меня объекты изменяемые, то что делать?
-    */
     public ArrayList<Integer> getSubtaskIds() {
         return new ArrayList<>(subtaskIds);
     }
@@ -30,7 +25,7 @@ public class EpicTask extends Task {
                 "name='" + name + '\'' +
                 ", id=" + id +
                 ", status=" + status +
-                ", subtasks=" + subtaskIds +
+                ", subtaskIds=" + subtaskIds +
                 "} ";
     }
 }

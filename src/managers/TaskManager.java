@@ -32,10 +32,13 @@ public class TaskManager {
     }
 
     public ArrayList<Subtask> getAllSubtasks(int epicTaskId) {
+        EpicTask epicTask = epicTasks.get(epicTaskId);
         ArrayList<Subtask> epicSubtasks = new ArrayList<>();
 
-        for (Integer subtaskId : epicTasks.get(epicTaskId).getSubtaskIds()) {
-            epicSubtasks.add(subtasks.get(subtaskId));
+        if ( epicTask != null ) {
+            for (Integer subtaskId : epicTask.getSubtaskIds()) {
+                epicSubtasks.add(subtasks.get(subtaskId));
+            }
         }
 
         return epicSubtasks;
@@ -107,10 +110,13 @@ public class TaskManager {
     }
 
     public void deleteAllSubtasks() {
-        for (EpicTask epicTask : epicTasks.values()) {
+        ArrayList<EpicTask> epicTasksValues = new ArrayList<>(epicTasks.values());
+
+        for (EpicTask epicTask : epicTasksValues) {
             epicTask = new EpicTask(epicTask.getName(), epicTask.getDescription(), epicTask.getId());
             epicTasks.put(epicTask.getId(), epicTask);
         }
+
         subtasks.clear();
     }
 
