@@ -44,6 +44,22 @@ public class TaskManager {
         return epicSubtasks;
     }
 
+    /*
+    Создал create методы, потому что мне показалось это лучше,
+    чем пересоздание объектов с нужным id в add (но я не уверен)
+     */
+    public Task createTask(String name, String description) {
+        return new Task(name, description, generateTaskId());
+    }
+
+    public EpicTask createEpicTask(String name, String description) {
+        return new EpicTask(name, description, generateTaskId());
+    }
+
+    public Subtask createSubtask(String name, String description, int epicTaskId) {
+        return new Subtask(name, description, generateTaskId(), epicTaskId);
+    }
+
     public void addTask(Task task) {
         tasks.put(task.getId(), task);
     }
@@ -137,7 +153,7 @@ public class TaskManager {
         epicTasks.remove(id);
     }
 
-    public int generateTaskId() {
+    private int generateTaskId() {
         return taskId++;
     }
 

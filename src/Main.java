@@ -6,22 +6,19 @@ public class Main {
     public static void main(String[] args) {
         TaskManager taskManager = new TaskManager();
 
-        Task task1 = new Task("common task1", "description", taskManager.generateTaskId());
-        Task task2 = new Task("common task2", "description", taskManager.generateTaskId());
+        Task task1 = taskManager.createTask("common task1", "description");
+        Task task2 = taskManager.createTask("common task2", "description");
         taskManager.addTask(task1);
         taskManager.addTask(task2);
 
-        EpicTask epicTask1 = new EpicTask("EP1", "description", taskManager.generateTaskId());
-        EpicTask epicTask2 = new EpicTask("EP2", "description", taskManager.generateTaskId());
+        EpicTask epicTask1 = taskManager.createEpicTask("EP1", "description");
+        EpicTask epicTask2 = taskManager.createEpicTask("EP2", "description");
         taskManager.addTask(epicTask1);
         taskManager.addTask(epicTask2);
 
-        Subtask subtask11 = new Subtask("SUB11", "description",
-                taskManager.generateTaskId(), epicTask1.getId());
-        Subtask subtask12 = new Subtask("SUB12", "description",
-                taskManager.generateTaskId(), epicTask1.getId());
-        Subtask subtask21 = new Subtask("SUB21", "description",
-                taskManager.generateTaskId(), epicTask2.getId());
+        Subtask subtask11 = taskManager.createSubtask("SUB11", "description", epicTask1.getId());
+        Subtask subtask12 = taskManager.createSubtask("SUB12", "description", epicTask1.getId());
+        Subtask subtask21 = taskManager.createSubtask("SUB21", "description", epicTask2.getId());
         taskManager.addTask(subtask11);
         taskManager.addTask(subtask12);
         taskManager.addTask(subtask21);
