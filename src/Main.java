@@ -6,22 +6,18 @@ public class Main {
     public static void main(String[] args) {
         TaskManager taskManager = new TaskManager();
 
-        Task task1 = taskManager.createTask("common task1", "description");
-        Task task2 = taskManager.createTask("common task2", "description");
-        taskManager.addTask(task1);
-        taskManager.addTask(task2);
+        Task task1 =  taskManager.addTask(new Task("common task1", "description", 0));
+        Task task2 = taskManager.addTask(new Task("common task2", "description", 0));
 
-        EpicTask epicTask1 = taskManager.createEpicTask("EP1", "description");
-        EpicTask epicTask2 = taskManager.createEpicTask("EP2", "description");
-        taskManager.addTask(epicTask1);
-        taskManager.addTask(epicTask2);
+        EpicTask epicTask1 = taskManager.addEpicTask(new EpicTask("EP1", "description", 0));
+        EpicTask epicTask2 = taskManager.addEpicTask(new EpicTask("EP2", "description", 0));
 
-        Subtask subtask11 = taskManager.createSubtask("SUB11", "description", epicTask1.getId());
-        Subtask subtask12 = taskManager.createSubtask("SUB12", "description", epicTask1.getId());
-        Subtask subtask21 = taskManager.createSubtask("SUB21", "description", epicTask2.getId());
-        taskManager.addTask(subtask11);
-        taskManager.addTask(subtask12);
-        taskManager.addTask(subtask21);
+        Subtask subtask11 = taskManager.addSubtask(new Subtask("SUB11", "description", 0,
+                epicTask1.getId()));
+        Subtask subtask12 = taskManager.addSubtask(new Subtask("SUB12", "description", 0,
+                epicTask1.getId()));
+        Subtask subtask21 = taskManager.addSubtask(new Subtask("SUB21", "description", 0,
+                epicTask2.getId()));
 
         System.out.println(taskManager.getAllTasks());
         System.out.println(taskManager.getAllEpicTasks());
@@ -39,9 +35,9 @@ public class Main {
         subtask21 = new Subtask(subtask21.getName(), subtask21.getDescription(), TaskStatus.DONE,
                 subtask21.getId(), subtask21.getEpicTaskOwnerId());
 
-        taskManager.updateTask(subtask11);
-        taskManager.updateTask(subtask12);
-        taskManager.updateTask(subtask21);
+        taskManager.updateSubtask(subtask11);
+        taskManager.updateSubtask(subtask12);
+        taskManager.updateSubtask(subtask21);
 
         System.out.println(taskManager.getAllTasks());
         System.out.println(taskManager.getAllEpicTasks());

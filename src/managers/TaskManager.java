@@ -44,39 +44,31 @@ public class TaskManager {
         return epicSubtasks;
     }
 
-    /*
-    Создал create методы, потому что мне показалось это лучше,
-    чем пересоздание объектов с нужным id в add (но я не уверен)
-     */
-    public Task createTask(String name, String description) {
-        return new Task(name, description, generateTaskId());
+    public Task addTask(Task task) {
+        Task newTask = new Task(task.getName(), task.getDescription(), generateTaskId());
+        tasks.put(newTask.getId(), newTask);
+        return newTask;
     }
 
-    public EpicTask createEpicTask(String name, String description) {
-        return new EpicTask(name, description, generateTaskId());
+    public EpicTask addEpicTask(EpicTask epicTask) {
+        EpicTask newEpicTask = new EpicTask(epicTask.getName(), epicTask.getDescription(), generateTaskId());
+        epicTasks.put(newEpicTask.getId(), newEpicTask);
+        return newEpicTask;
     }
 
-    public Subtask createSubtask(String name, String description, int epicTaskId) {
-        return new Subtask(name, description, generateTaskId(), epicTaskId);
-    }
-
-    public void addTask(Task task) {
-        tasks.put(task.getId(), task);
-    }
-
-    public void addTask(EpicTask epicTask) {
-        epicTasks.put(epicTask.getId(), epicTask);
-    }
-
-    public void addTask(Subtask subtask) {
+    public Subtask addSubtask(Subtask subtask) {
         EpicTask epicTask = epicTasks.get(subtask.getEpicTaskOwnerId());
 
         if (epicTask == null) {
-            return;
+            return null;
         }
 
-        subtasks.put(subtask.getId(), subtask);
-        addSubtaskToEpic(epicTask.getId(), subtask.getId());
+        Subtask newSubtask = new Subtask(subtask.getName(), subtask.getDescription(),
+                generateTaskId(), subtask.getEpicTaskOwnerId());
+
+        subtasks.put(newSubtask.getId(), newSubtask);
+        addSubtaskToEpic(epicTask.getId(), newSubtask.getId());
+        return newSubtask;
     }
 
     public void updateTask(Task task) {
@@ -87,15 +79,18 @@ public class TaskManager {
         tasks.put(task.getId(), task);
     }
 
-    public void updateTask(EpicTask epicTask) {
+    public void updateEpicTask(EpicTask epicTask) {
         if (!epicTasks.containsKey(epicTask.getId())) {
             return;
         }
 
-        epicTasks.put(epicTask.getId(), epicTask);
+        EpicTask updatedEpicTask = new EpicTask(epicTask.getName(), epicTask.getDescription(),
+                calcEpicTaskStatus(epicTask), epicTask.getId(), epicTask.getSubtaskIds());
+
+        epicTasks.put(updatedEpicTask.getId(), updatedEpicTask);
     }
 
-    public void updateTask(Subtask subtask) {
+    public void updateSubtask(Subtask subtask) {
         if (!subtasks.containsKey(subtask.getId())) {
             return;
         }
@@ -137,16 +132,28 @@ public class TaskManager {
     }
 
     public void deleteTask(int id) {
+        if (!tasks.containsKey(id)) {
+            return;
+        }
+
         tasks.remove(id);
     }
 
     public void deleteSubtask(int id) {
+        if (!subtasks.containsKey(id)) {
+            return;
+        }
+
         int epicTaskId = subtasks.get(id).getEpicTaskOwnerId();
         subtasks.remove(id);
         removeSubtaskFromEpic(epicTaskId, id);
     }
 
     public void deleteEpicTask(int id) {
+        if (!epicTasks.containsKey(id)) {
+            return;
+        }
+
         for (Integer subtaskId : epicTasks.get(id).getSubtaskIds()) {
             subtasks.remove(subtaskId);
         }
@@ -190,7 +197,7 @@ public class TaskManager {
         epicTask = new EpicTask(epicTask.getName(), epicTask.getDescription(), calcEpicTaskStatus(epicTask),
                 epicTask.getId(), epicTask.getSubtaskIds());
 
-        updateTask(epicTask);
+        epicTasks.put(epicTask.getId(), epicTask);
     }
 
     private void addSubtaskToEpic(int epicId, int subtaskId) {
@@ -201,7 +208,7 @@ public class TaskManager {
         epicTask = new EpicTask(epicTask.getName(), epicTask.getDescription(), calcEpicTaskStatus(epicTask),
                 epicTask.getId(), subtaskIds);
 
-        updateTask(epicTask);
+        epicTasks.put(epicTask.getId(), epicTask);
     }
 
     private void removeSubtaskFromEpic(int epicId, int subtaskId) {
@@ -212,6 +219,6 @@ public class TaskManager {
         epicTask = new EpicTask(epicTask.getName(), epicTask.getDescription(), calcEpicTaskStatus(epicTask),
                 epicTask.getId(), subtaskIds);
 
-        updateTask(epicTask);
+        epicTasks.put(epicTask.getId(), epicTask);
     }
 }
