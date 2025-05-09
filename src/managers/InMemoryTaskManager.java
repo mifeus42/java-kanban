@@ -97,7 +97,7 @@ public class InMemoryTaskManager implements TaskManager{
         }
 
         EpicTask updatedEpicTask = new EpicTask(epicTask.getName(), epicTask.getDescription(),
-                calcEpicTaskStatus(epicTask), epicTask.getId(), epicTask.getSubtaskIds());
+                calcEpicTaskStatus(epicTask.getSubtaskIds()), epicTask.getId(), epicTask.getSubtaskIds());
 
         epicTasks.put(updatedEpicTask.getId(), updatedEpicTask);
     }
@@ -203,11 +203,11 @@ public class InMemoryTaskManager implements TaskManager{
         return taskId++;
     }
 
-    private TaskStatus calcEpicTaskStatus(EpicTask epicTask) {
+    private TaskStatus calcEpicTaskStatus(ArrayList<Integer> subtaskIds) {
         boolean isAllTaskNew = true;
         boolean isAllTasksDone = true;
 
-        for (Integer subtaskId : epicTask.getSubtaskIds()) {
+        for (Integer subtaskId : subtaskIds) {
             Subtask subtask = subtasks.get(subtaskId);
 
             if (subtask.getStatus() != TaskStatus.DONE) {
@@ -220,7 +220,7 @@ public class InMemoryTaskManager implements TaskManager{
 
         TaskStatus taskStatus;
 
-        if (epicTask.getSubtaskIds().isEmpty() || isAllTaskNew) {
+        if (subtaskIds.isEmpty() || isAllTaskNew) {
             taskStatus = TaskStatus.NEW;
         } else if (isAllTasksDone) {
             taskStatus = TaskStatus.DONE;
@@ -233,8 +233,8 @@ public class InMemoryTaskManager implements TaskManager{
 
     private void updateStatusEpic(int epicId) {
         EpicTask epicTask = epicTasks.get(epicId);
-        epicTask = new EpicTask(epicTask.getName(), epicTask.getDescription(), calcEpicTaskStatus(epicTask),
-                epicTask.getId(), epicTask.getSubtaskIds());
+        epicTask = new EpicTask(epicTask.getName(), epicTask.getDescription(),
+                calcEpicTaskStatus(epicTask.getSubtaskIds()), epicTask.getId(), epicTask.getSubtaskIds());
 
         epicTasks.put(epicTask.getId(), epicTask);
     }
@@ -244,7 +244,7 @@ public class InMemoryTaskManager implements TaskManager{
         ArrayList<Integer> subtaskIds = epicTask.getSubtaskIds();
         subtaskIds.add(subtaskId);
 
-        epicTask = new EpicTask(epicTask.getName(), epicTask.getDescription(), calcEpicTaskStatus(epicTask),
+        epicTask = new EpicTask(epicTask.getName(), epicTask.getDescription(), calcEpicTaskStatus(subtaskIds),
                 epicTask.getId(), subtaskIds);
 
         epicTasks.put(epicTask.getId(), epicTask);
@@ -253,9 +253,9 @@ public class InMemoryTaskManager implements TaskManager{
     private void removeSubtaskFromEpic(int epicId, int subtaskId) {
         EpicTask epicTask = epicTasks.get(epicId);
         ArrayList<Integer> subtaskIds = epicTask.getSubtaskIds();
-        subtaskIds.remove(subtaskId);
+        subtaskIds.remove((Integer) subtaskId);
 
-        epicTask = new EpicTask(epicTask.getName(), epicTask.getDescription(), calcEpicTaskStatus(epicTask),
+        epicTask = new EpicTask(epicTask.getName(), epicTask.getDescription(), calcEpicTaskStatus(subtaskIds),
                 epicTask.getId(), subtaskIds);
 
         epicTasks.put(epicTask.getId(), epicTask);
