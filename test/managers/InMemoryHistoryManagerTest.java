@@ -54,4 +54,16 @@ class InMemoryHistoryManagerTest {
 
         assertNotEquals(taskIdToDelete, firstTask.getId(), "Задача не удалилась");
     }
+
+    @Test
+    public void shouldBeNoMoreThan10TasksInHistory() {
+        int expectedSize = 10;
+
+        for (int i = 0; i < 11; i++) {
+            Task task = new Task("Task", "", i);
+            inMemoryHistoryManager.add(task);
+        }
+
+        assertEquals(expectedSize, inMemoryHistoryManager.getHistory().size(), "Количество задач больше 10");
+    }
 }

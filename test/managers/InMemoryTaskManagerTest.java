@@ -11,16 +11,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTaskManagerTest {
     InMemoryTaskManager inMemoryTaskManager;
+    Task task;
+    EpicTask epicTask;
 
     @BeforeEach
     public void beforeEach() {
         inMemoryTaskManager = new InMemoryTaskManager(new InMemoryHistoryManager());
+        task = new Task("Task", "description", 0);
+        epicTask = new EpicTask("EpicTask", "description", 0);
     }
 
     @Test
     public void shouldNoChangeFieldsTaskAfterAddInManager() {
-        Task task = new Task("Task", "description", 0);
-
         Task addedTask = inMemoryTaskManager.addTask(task);
 
         assertEquals(task.getName(), addedTask.getName(), "Имя задачи изменилось");
@@ -29,8 +31,6 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void shouldNoChangeFieldsEpicTaskAfterAddInManager() {
-        EpicTask epicTask = new EpicTask("EpicTask", "description", 0);
-
         EpicTask addedEpicTask = inMemoryTaskManager.addEpicTask(epicTask);
 
         assertEquals(epicTask.getName(), addedEpicTask.getName(), "Имя эпика изменилось");
@@ -39,10 +39,9 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void shouldNoChangeFieldsSubtaskAfterAddInManager() {
-        EpicTask epicTask = inMemoryTaskManager.addEpicTask(new EpicTask("EpicTask",
-                "description", 0));
+        EpicTask addedEpicTask = inMemoryTaskManager.addEpicTask(epicTask);
 
-        Subtask subtask = new Subtask("Subtask", "description", 0, epicTask.getId());
+        Subtask subtask = new Subtask("Subtask", "description", 0, addedEpicTask.getId());
 
         Subtask addedSubtask = inMemoryTaskManager.addSubtask(subtask);
 
@@ -54,7 +53,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void shouldDeleteTaskFromManager() {
-        Task addedTask = inMemoryTaskManager.addTask(new Task("Task", "description", 0));
+        Task addedTask = inMemoryTaskManager.addTask(task);
 
         inMemoryTaskManager.deleteTask(addedTask.getId());
 
@@ -63,21 +62,19 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void shouldDeleteEpicTaskFromManager() {
-        EpicTask epicTask = inMemoryTaskManager.addEpicTask(new EpicTask("EpicTask",
-                "description", 0));
+        EpicTask addedEpicTask = inMemoryTaskManager.addEpicTask(epicTask);
 
-        inMemoryTaskManager.deleteEpicTask(epicTask.getId());
+        inMemoryTaskManager.deleteEpicTask(addedEpicTask.getId());
 
-        assertNull(inMemoryTaskManager.getEpicTask(epicTask.getId()), "Эпик не удалился");
+        assertNull(inMemoryTaskManager.getEpicTask(addedEpicTask.getId()), "Эпик не удалился");
     }
 
     @Test
     public void shouldDeleteSubtaskFromManager() {
-        EpicTask epicTask = inMemoryTaskManager.addEpicTask(new EpicTask("EpicTask",
-                "description", 0));
+        EpicTask addedEpicTask = inMemoryTaskManager.addEpicTask(epicTask);
 
         Subtask addedSubtask = inMemoryTaskManager.addSubtask(new Subtask("Subtask",
-                "description", 0, epicTask.getId()));
+                "description", 0, addedEpicTask.getId()));
 
         inMemoryTaskManager.deleteSubtask(addedSubtask.getId());
 
@@ -86,21 +83,20 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void shouldDeleteSubtaskFromManagerWhenDeleteEpic() {
-        EpicTask epicTask = inMemoryTaskManager.addEpicTask(new EpicTask("EpicTask",
-                "description", 0));
+        EpicTask addedEpicTask = inMemoryTaskManager.addEpicTask(epicTask);
 
         Subtask addedSubtask = inMemoryTaskManager.addSubtask(new Subtask("Subtask",
-                "description", 0, epicTask.getId()));
+                "description", 0, addedEpicTask.getId()));
 
-        inMemoryTaskManager.deleteEpicTask(epicTask.getId());
+        inMemoryTaskManager.deleteEpicTask(addedEpicTask.getId());
 
         assertNull(inMemoryTaskManager.getSubtask(addedSubtask.getId()), "Подзадача не удалилась");
     }
 
     @Test
     public void shouldDeleteAllTasksFromManager() {
-        inMemoryTaskManager.addTask(new Task("Task", "description", 0));
-        inMemoryTaskManager.addTask(new Task("Task", "description", 0));
+        inMemoryTaskManager.addTask(task);
+        inMemoryTaskManager.addTask(task);
 
         inMemoryTaskManager.deleteAllTasks();
 
@@ -109,8 +105,8 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void shouldDeleteAllEpicTasksFromManager() {
-        inMemoryTaskManager.addEpicTask(new EpicTask("EpicTask", "description", 0));
-        inMemoryTaskManager.addEpicTask(new EpicTask("EpicTask", "description", 0));
+        inMemoryTaskManager.addEpicTask(epicTask);
+        inMemoryTaskManager.addEpicTask(epicTask);
 
         inMemoryTaskManager.deleteAllEpicTasks();
 
@@ -119,10 +115,8 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void shouldDeleteAllSubtasksFromManager() {
-        EpicTask epicTask1 = inMemoryTaskManager.addEpicTask(new EpicTask("EpicTask",
-                "description", 0));
-        EpicTask epicTask2 = inMemoryTaskManager.addEpicTask(new EpicTask("EpicTask",
-                "description", 0));
+        EpicTask epicTask1 = inMemoryTaskManager.addEpicTask(epicTask);
+        EpicTask epicTask2 = inMemoryTaskManager.addEpicTask(epicTask);
 
         inMemoryTaskManager.addSubtask(new Subtask("Subtask", "description", 0, epicTask1.getId()));
         inMemoryTaskManager.addSubtask(new Subtask("Subtask", "description", 0, epicTask1.getId()));
@@ -136,7 +130,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void shouldUpdateFieldsTaskWhenCalledUpdate() {
-        Task addedTask = inMemoryTaskManager.addTask(new Task("Task", "description", 0));
+        Task addedTask = inMemoryTaskManager.addTask(task);
 
         Task updatedTask = new Task("newTaskName", "newDescription",
                 TaskStatus.IN_PROGRESS, addedTask.getId());
@@ -151,10 +145,10 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void shouldUpdateFieldsEpicTaskWhenCalledUpdateExceptStatus() {
-        EpicTask epicTask = inMemoryTaskManager.addEpicTask(new EpicTask("Task", "description", 0));
+        EpicTask addedEpicTask = inMemoryTaskManager.addEpicTask(epicTask);
 
         EpicTask updatedEpicTask = new EpicTask("newTaskName", "newDescription",
-                TaskStatus.IN_PROGRESS, epicTask.getId(), epicTask.getSubtaskIds());
+                TaskStatus.IN_PROGRESS, addedEpicTask.getId(), addedEpicTask.getSubtaskIds());
 
         inMemoryTaskManager.updateEpicTask(updatedEpicTask);
         updatedEpicTask = inMemoryTaskManager.getEpicTask(updatedEpicTask.getId());
@@ -162,16 +156,15 @@ class InMemoryTaskManagerTest {
         assertEquals("newTaskName", updatedEpicTask.getName(), "Имя эпика не поменялось");
         assertEquals("newDescription", updatedEpicTask.getDescription(),
                 "Описание эпика не поменялось");
-        assertEquals(epicTask.getStatus(), updatedEpicTask.getStatus(), "Статус эпика поменялся");
+        assertEquals(addedEpicTask.getStatus(), updatedEpicTask.getStatus(), "Статус эпика поменялся");
     }
 
     @Test
     public void shouldUpdateFieldsSubtaskWhenCalledUpdate() {
-        EpicTask epicTask = inMemoryTaskManager.addEpicTask(new EpicTask("EpicTask",
-                "description", 0));
+        EpicTask addedEpicTask = inMemoryTaskManager.addEpicTask(epicTask);
 
         Subtask addedSubtask = inMemoryTaskManager.addSubtask(new Subtask("Subtask",
-                "description", 0, epicTask.getId()));
+                "description", 0, addedEpicTask.getId()));
 
         Subtask updatedSubtask = new Subtask("newTaskName", "newDescription",
                 TaskStatus.IN_PROGRESS, addedSubtask.getId(), addedSubtask.getEpicTaskOwnerId());
@@ -187,53 +180,51 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void shouldUpdateEpicStatusFromDoneToInProgressWhenAddNewSubtask() {
-        EpicTask epicTask = inMemoryTaskManager.addEpicTask(new EpicTask("EpicTask",
-                "description", 0));
+        EpicTask addedEpicTask = inMemoryTaskManager.addEpicTask(epicTask);
 
         Subtask subtask = inMemoryTaskManager.addSubtask(new Subtask("Subtask",
-                "description", 0, epicTask.getId()));
+                "description", 0, addedEpicTask.getId()));
 
         subtask = new Subtask("newTaskName", "newDescription",
                 TaskStatus.DONE, subtask.getId(), subtask.getEpicTaskOwnerId());
 
         inMemoryTaskManager.updateSubtask(subtask);
 
-        inMemoryTaskManager.addSubtask(new Subtask("Subtask", "description", 0, epicTask.getId()));
+        inMemoryTaskManager.addSubtask(new Subtask("Subtask",
+                "description", 0, addedEpicTask.getId()));
 
-        assertEquals(TaskStatus.IN_PROGRESS, inMemoryTaskManager.getEpicTask(epicTask.getId()).getStatus(),
+        assertEquals(TaskStatus.IN_PROGRESS, inMemoryTaskManager.getEpicTask(addedEpicTask.getId()).getStatus(),
                 "Статус эпика не поменялся");
     }
 
     @Test
     public void shouldUpdateEpicStatusWhenUpdateAnySubtaskStatusToInProgress() {
-        EpicTask epicTask = inMemoryTaskManager.addEpicTask(new EpicTask("EpicTask",
-                "description", 0));
+        EpicTask addedEpicTask = inMemoryTaskManager.addEpicTask(epicTask);
 
         inMemoryTaskManager.addSubtask(new Subtask("Subtask",
-                "description", 0, epicTask.getId()));
+                "description", 0, addedEpicTask.getId()));
 
         Subtask subtask = inMemoryTaskManager.addSubtask(new Subtask("Subtask",
-                "description", 0, epicTask.getId()));
+                "description", 0, addedEpicTask.getId()));
 
         subtask = new Subtask("newTaskName", "newDescription",
                 TaskStatus.IN_PROGRESS, subtask.getId(), subtask.getEpicTaskOwnerId());
 
         inMemoryTaskManager.updateSubtask(subtask);
 
-        assertEquals(TaskStatus.IN_PROGRESS, inMemoryTaskManager.getEpicTask(epicTask.getId()).getStatus(),
+        assertEquals(TaskStatus.IN_PROGRESS, inMemoryTaskManager.getEpicTask(addedEpicTask.getId()).getStatus(),
                 "Статус эпика не поменялся");
     }
 
     @Test
     public void shouldUpdateEpicStatusWhenUpdateAllSubtaskStatusToDone() {
-        EpicTask epicTask = inMemoryTaskManager.addEpicTask(new EpicTask("EpicTask",
-                "description", 0));
+        EpicTask addedEpicTask = inMemoryTaskManager.addEpicTask(epicTask);
 
         Subtask subtask1 = inMemoryTaskManager.addSubtask(new Subtask("Subtask",
-                "description", 0, epicTask.getId()));
+                "description", 0, addedEpicTask.getId()));
 
         Subtask subtask2 = inMemoryTaskManager.addSubtask(new Subtask("Subtask",
-                "description", 0, epicTask.getId()));
+                "description", 0, addedEpicTask.getId()));
 
         subtask1 = new Subtask("newTaskName", "newDescription",
                 TaskStatus.DONE, subtask1.getId(), subtask1.getEpicTaskOwnerId());
@@ -244,20 +235,19 @@ class InMemoryTaskManagerTest {
         inMemoryTaskManager.updateSubtask(subtask1);
         inMemoryTaskManager.updateSubtask(subtask2);
 
-        assertEquals(TaskStatus.DONE, inMemoryTaskManager.getEpicTask(epicTask.getId()).getStatus(),
+        assertEquals(TaskStatus.DONE, inMemoryTaskManager.getEpicTask(addedEpicTask.getId()).getStatus(),
                 "Статус эпика не поменялся");
     }
 
     @Test
     public void shouldUpdateEpicStatusWhenDeleteAllSubtaskInProgress() {
-        EpicTask epicTask = inMemoryTaskManager.addEpicTask(new EpicTask("EpicTask",
-                "description", 0));
+        EpicTask addedEpicTask = inMemoryTaskManager.addEpicTask(epicTask);
 
         Subtask subtask1 = inMemoryTaskManager.addSubtask(new Subtask("Subtask",
-                "description", 0, epicTask.getId()));
+                "description", 0, addedEpicTask.getId()));
 
         Subtask subtask2 = inMemoryTaskManager.addSubtask(new Subtask("Subtask",
-                "description", 0, epicTask.getId()));
+                "description", 0, addedEpicTask.getId()));
 
         subtask1 = new Subtask("newTaskName", "newDescription",
                 TaskStatus.IN_PROGRESS, subtask1.getId(), subtask1.getEpicTaskOwnerId());
@@ -270,20 +260,19 @@ class InMemoryTaskManagerTest {
 
         inMemoryTaskManager.deleteSubtask(subtask1.getId());
 
-        assertEquals(TaskStatus.DONE, inMemoryTaskManager.getEpicTask(epicTask.getId()).getStatus(),
+        assertEquals(TaskStatus.DONE, inMemoryTaskManager.getEpicTask(addedEpicTask.getId()).getStatus(),
                 "Статус эпика не поменялся");
     }
 
     @Test
     public void shouldUpdateEpicStatusToNewWhenDeleteAllSubtask() {
-        EpicTask epicTask = inMemoryTaskManager.addEpicTask(new EpicTask("EpicTask",
-                "description", 0));
+        EpicTask addedEpicTask = inMemoryTaskManager.addEpicTask(epicTask);
 
         Subtask subtask1 = inMemoryTaskManager.addSubtask(new Subtask("Subtask",
-                "description", 0, epicTask.getId()));
+                "description", 0, addedEpicTask.getId()));
 
         Subtask subtask2 = inMemoryTaskManager.addSubtask(new Subtask("Subtask",
-                "description", 0, epicTask.getId()));
+                "description", 0, addedEpicTask.getId()));
 
         subtask1 = new Subtask("newTaskName", "newDescription",
                 TaskStatus.IN_PROGRESS, subtask1.getId(), subtask1.getEpicTaskOwnerId());
@@ -296,7 +285,7 @@ class InMemoryTaskManagerTest {
 
         inMemoryTaskManager.deleteAllSubtasks();
 
-        assertEquals(TaskStatus.NEW, inMemoryTaskManager.getEpicTask(epicTask.getId()).getStatus(),
+        assertEquals(TaskStatus.NEW, inMemoryTaskManager.getEpicTask(addedEpicTask.getId()).getStatus(),
                 "Статус эпика не поменялся");
     }
 }
